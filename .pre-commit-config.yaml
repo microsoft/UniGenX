@@ -1,0 +1,29 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.2.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: fix-encoding-pragma
+      - id: mixed-line-ending
+      - id: trailing-whitespace
+      - id: check-json
+        exclude: (^megatron/|^tools/)
+      - id: check-merge-conflict
+        args: ['--assume-in-merge']
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        args: ["--profile", "black"]
+        exclude: (^megatron/|^tools/)
+  - repo: https://github.com/psf/black
+    rev: 23.3.0
+    hooks:
+      - id: black
+        exclude: (^megatron/|^tools/)
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: 'v0.0.274'
+    hooks:
+      - id: ruff
+        args: [--fix, "--ignore=E501,F401,E722,E402,E741"]
+        exclude: (^megatron/|^tools/)
