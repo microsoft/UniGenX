@@ -1,0 +1,7 @@
+--no-index
+--find-links https://data.pyg.org/whl/torch-2.3.0+cu121.html
+pyg-lib
+torch-scatter
+torch-sparse
+torch-cluster
+
