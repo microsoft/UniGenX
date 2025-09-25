@@ -32,7 +32,7 @@ dependencies:
   - pip:
       # torch-geometric and additional libs from pyg
       - torch-geometric==2.5.3
-      # Note that pyg_lib, torch_scatter, torch_sparse, torch_cluster, torch_spline_conv should all be installed separately using --no-index. Run setup.sh to do so.
+      # Note that pyg_lib, torch_scatter, torch_sparse, torch_cluster, torch_spline_conv should all be installed separately using --no-index. pip nstall -r requirements.txt to do so.
       # others
       - deepspeed==0.14.0
       - sacremoses==0.1.1
