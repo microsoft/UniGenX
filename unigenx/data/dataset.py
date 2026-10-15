@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 import json
-import pickle
 import random
 import re
-import zlib
 from collections import OrderedDict
 from enum import Enum
 from functools import cmp_to_key
 from typing import List, Union
 
-import lmdb
 import numpy as np
 import torch
 from torch.utils.data import Dataset
@@ -344,21 +341,15 @@ class ThreeDimARGenDataset(Dataset):
             with open(data_path, "r") as f:
                 lines = f.readlines()
             self.load_txt(lines)
-        elif data_format == "lmdb":
-            self.env = lmdb.open(data_path, readonly=True, lock=False, readahead=False)
-            self.txn = self.env.begin(write=False)
-            try:
-                metadata = pickle.loads(
-                    zlib.decompress(self.txn.get("__metadata__".encode()))
-                )
-                self.sizes, self.keys = metadata["sizes"], metadata["keys"]
-            except:
-                cursor = self.txn.cursor()
-                for key, _ in cursor:
-                    self.keys.append(key)
-        elif data_format == "pickle":
-            with open(data_path, "rb") as f:
-                self.data = pickle.load(f)
+        elif data_format in ("lmdb", "pickle"):
+            raise ValueError(
+                f"Loading '{data_format}' datasets is no longer supported. These formats "
+                "rely on Python pickle deserialization, which can execute arbitrary code "
+                "when reading untrusted files (CWE-502). Please convert your data to "
+                "JSON/JSONL and pass a .json or .jsonl file via --input_file instead. "
+                "Example inputs are available in the maintained version of this project: "
+                "https://github.com/UniGenX-Team/UniGenX/tree/main/examples/data"
+            )
         else:
             raise ValueError(f"Unknown data format {data_format}")
 
@@ -431,7 +422,10 @@ class ThreeDimARGenDataset(Dataset):
             with self.env.begin() as txn:
                 with txn.cursor() as curs:
                     datapoint_pickled = curs.get(self.data[index])
-                    data_item = pickle.loads(datapoint_pickled)
+                    raise RuntimeError(
+                        "Reading records via pickle is disabled (CWE-502). "
+                        "Use JSON/JSONL input instead."
+                    )
         else:
             data_item = self.data[index]
 
@@ -473,7 +467,10 @@ class ThreeDimARGenDataset(Dataset):
             with self.env.begin() as txn:
                 with txn.cursor() as curs:
                     datapoint_pickled = curs.get(self.keys[index].encode())
-                    data_item = pickle.loads(zlib.decompress(datapoint_pickled))
+                    raise RuntimeError(
+                        "Reading records via pickle is disabled (CWE-502). "
+                        "Use JSON/JSONL input instead."
+                    )
         else:
             data_item = self.data[index]
 
@@ -537,7 +534,10 @@ class ThreeDimARGenDataset(Dataset):
             with self.env.begin() as txn:
                 with txn.cursor() as curs:
                     datapoint_pickled = curs.get(self.data[index])
-                    data_item = pickle.loads(datapoint_pickled)
+                    raise RuntimeError(
+                        "Reading records via pickle is disabled (CWE-502). "
+                        "Use JSON/JSONL input instead."
+                    )
         else:
             data_item = self.data[index]
 
@@ -619,7 +619,10 @@ class ThreeDimARGenDataset(Dataset):
             with self.env.begin() as txn:
                 with txn.cursor() as curs:
                     datapoint_pickled = curs.get(self.data[index])
-                    data_item = pickle.loads(datapoint_pickled)
+                    raise RuntimeError(
+                        "Reading records via pickle is disabled (CWE-502). "
+                        "Use JSON/JSONL input instead."
+                    )
         else:
             data_item = self.data[index]
         # data_item = self.data[index]
@@ -754,7 +757,10 @@ class ThreeDimARGenDataset(Dataset):
             with self.env.begin() as txn:
                 with txn.cursor() as curs:
                     datapoint_pickled = curs.get(self.data[index])
-                    data_item = pickle.loads(datapoint_pickled)
+                    raise RuntimeError(
+                        "Reading records via pickle is disabled (CWE-502). "
+                        "Use JSON/JSONL input instead."
+                    )
         else:
             data_item = self.data[index]
 
@@ -820,7 +826,10 @@ class ThreeDimARGenDataset(Dataset):
             with self.env.begin() as txn:
                 with txn.cursor() as curs:
                     datapoint_pickled = curs.get(key.encode())
-                    data_item = pickle.loads(zlib.decompress(datapoint_pickled))
+                    raise RuntimeError(
+                        "Reading records via pickle is disabled (CWE-502). "
+                        "Use JSON/JSONL input instead."
+                    )
         else:
             data_item = key
         # begin with bos
@@ -872,7 +881,10 @@ class ThreeDimARGenDataset(Dataset):
             with self.env.begin() as txn:
                 with txn.cursor() as curs:
                     datapoint_pickled = curs.get(self.data[index])
-                    data_item = pickle.loads(datapoint_pickled)
+                    raise RuntimeError(
+                        "Reading records via pickle is disabled (CWE-502). "
+                        "Use JSON/JSONL input instead."
+                    )
         else:
             data_item = self.data[index]
 
@@ -1162,7 +1174,10 @@ class ThreeDimARGenDataset(Dataset):
             with self.env.begin() as txn:
                 with txn.cursor() as curs:
                     datapoint_pickled = curs.get(self.data[index])
-                    data_item = pickle.loads(datapoint_pickled)
+                    raise RuntimeError(
+                        "Reading records via pickle is disabled (CWE-502). "
+                        "Use JSON/JSONL input instead."
+                    )
         else:
             data_item = self.data[index]
 

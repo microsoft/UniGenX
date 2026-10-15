@@ -6,7 +6,7 @@ import os
 
 def analyze_checkpoint(ckpt_path):
     # load checkpoint
-    checkpoint = torch.load(ckpt_path, map_location="cpu")
+    checkpoint = torch.load(ckpt_path, map_location="cpu", weights_only=True)
     state_dict = checkpoint['state_dict'] if 'state_dict' in checkpoint else checkpoint
     
     print("all params：")
