@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import argparse
 import json
 from dataclasses import asdict
 import os
@@ -52,7 +53,12 @@ def main(args):
     if inference_config.input_file is None:
         inference_config = arg_utils.from_args(args, UniGenInferencedenovoConfig)
 
-    checkpoints_state = torch.load(config.loadcheck_path, map_location="cpu")
+    # Restrict checkpoint deserialization to tensors plus the argparse.Namespace
+    # used to store training args, instead of allowing arbitrary pickle (CWE-502).
+    torch.serialization.add_safe_globals([argparse.Namespace])
+    checkpoints_state = torch.load(
+        config.loadcheck_path, map_location="cpu", weights_only=True
+    )
     saved_args = checkpoints_state["args"]
 
     saved_config = arg_utils.from_args(saved_args, UniGenConfig)
